@@ -3,6 +3,7 @@ package br.com.vinicius.api.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Table(name="`User`")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
