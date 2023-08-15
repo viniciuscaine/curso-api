@@ -4,6 +4,7 @@ import br.com.vinicius.api.domain.User;
 import br.com.vinicius.api.domain.dto.UserDTO;
 import br.com.vinicius.api.repositories.UserRepository;
 import br.com.vinicius.api.services.UserService;
+import br.com.vinicius.api.services.exceptions.DataIntegratyViolationException;
 import br.com.vinicius.api.services.exceptions.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(UserDTO obj) {
+        findByEmail(obj);
         return repository.save(mapper.map(obj, User.class));
+    }
+
+    @Override
+    public User update(UserDTO obj) {
+        findByEmail(obj);
+        return repository.save(mapper.map(obj, User.class));
+    }
+
+    private void findByEmail(UserDTO obj) {
+        Optional<User> user = repository.findByEmail(obj.getEmail());
+        if (user.isPresent() && !user.get().getId().equals(obj.getId())) {
+            throw new DataIntegratyViolationException("E-mail já cadastrado no sistema");
+        }
     }
 }
